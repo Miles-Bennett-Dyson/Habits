@@ -60,7 +60,7 @@ class Habits(models.Model):
     )
     duration = models.DurationField(
         verbose_name="Длительность выполнения",
-        help_text = "Укажите время, которое предположительно потратите на выполнение привычки."
+        help_text = "Укажите время в секундах, которое предположительно потратите на выполнение привычки."
     )
     is_public = models.BooleanField(
         default=False,
