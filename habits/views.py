@@ -27,3 +27,8 @@ class HabitsVewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsOwner]
 
         return [permission() for permission in self.permission_classes]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        public_queryset = queryset.filter(is_public=True)|queryset.filter(owner=self.request.user)
+        return public_queryset
