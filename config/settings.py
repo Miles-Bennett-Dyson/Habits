@@ -1,6 +1,11 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+from django.urls import reverse_lazy
+
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -80,7 +85,6 @@ DEFAULT_APPS = [
 
 ADDITIONAL_APPS = [
     'rest_framework',
-    'django_filters',
     'rest_framework_simplejwt',
     'drf_yasg',
     'django_celery_beat',
