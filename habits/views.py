@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from habits.models import Habits
@@ -29,6 +29,14 @@ class HabitsVewSet(viewsets.ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        public_queryset = queryset.filter(is_public=True)|queryset.filter(owner=self.request.user)
-        return public_queryset
+        queryset = super().get_queryset().filter(owner=self.request.user)
+        return queryset
+
+class HabitListApiVew(generics.ListAPIView):
+    serializer_class = HabitSerializer
+    queryset = Habits.objects.all()
+    pagination_class = HabitPaginator
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(is_public=True).exclude(owner=self.request.user)
+        return queryset
