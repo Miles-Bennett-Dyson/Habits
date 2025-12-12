@@ -4,21 +4,12 @@ NULLABLE = {'null': True, 'blank': True}
 
 class Habits(models.Model):
 
-    PERIODICITY_CHOICES = [
-        (1, 'Каждые понедельник, среда, пятница'),
-        (2, 'Каждые вторник, четверг, суббота'),
-        (3, 'Каждый будний день'),
-        (4, 'Каждые выходные'),
-        (5, 'Ежедневно')
-    ]
-
     owner = models.ForeignKey(
         'users.User',
         on_delete=models.CASCADE,
         verbose_name="Автор записи",
-        related_name="habit",
-        blank=True,
-        null=True
+        related_name="owner",
+        **NULLABLE,
     )
     place = models.CharField(
         max_length=255,
@@ -47,8 +38,7 @@ class Habits(models.Model):
         help_text= "Укажите связанную привычку"
     )
     periodicity = models.PositiveIntegerField(
-        default=5,
-        choices=PERIODICITY_CHOICES,
+        default=1,
         verbose_name="Периодичность",
         help_text = "Укажите периодичность выполнения привычки для напоминания в днях"
     )

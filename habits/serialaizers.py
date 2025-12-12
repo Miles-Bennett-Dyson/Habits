@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from habits.models import Habits
-from habits.validators import DurationValidator
+from habits.validators import DurationValidator, HabitFieldsValidator
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -21,4 +21,4 @@ class HabitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habits
         fields = '__all__'
-        validators = [DurationValidator(field='duration', )]
+        validators = [DurationValidator(field='duration', ), HabitFieldsValidator()]
