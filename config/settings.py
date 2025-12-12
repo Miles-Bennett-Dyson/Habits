@@ -97,7 +97,8 @@ ADDITIONAL_APPS = [
 ]
 
 LOCAL_APPS = [
-    'users'
+    'users',
+    'habits',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + ADDITIONAL_APPS + LOCAL_APPS
