@@ -13,6 +13,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True if os.getenv('DEBUG') == 'True' else False
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 ALLOWED_HOSTS = []
 
 MIDDLEWARE = [
@@ -72,6 +74,10 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = reverse_lazy('users:login')
+
 #          *- INSTALLED APPS -*
 
 DEFAULT_APPS = [
@@ -90,7 +96,9 @@ ADDITIONAL_APPS = [
     'django_celery_beat',
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    'users'
+]
 
 INSTALLED_APPS = DEFAULT_APPS + ADDITIONAL_APPS + LOCAL_APPS
 
@@ -168,8 +176,6 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
