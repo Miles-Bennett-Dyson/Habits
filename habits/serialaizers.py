@@ -13,7 +13,7 @@ class HabitSerializer(serializers.ModelSerializer):
         reward = validated_data.get('reward')
         user_time = validated_data.get('time')
         periodicity = validated_data.get('periodicity')
-        validated_data['next_due_date'] = setting_next_date(user_time, periodicity)
+        validated_data['next_due_date'] = setting_next_date(periodicity)
 
         if not related_habit and not reward:
             raise ValidationError('Необходимо указать вознаграждение ИЛИ связанную привычку')

@@ -5,6 +5,7 @@ from habits.models import Habits
 from habits.paginators import HabitPaginator
 from habits.permissions import IsOwner
 from habits.serialaizers import HabitSerializer
+from habits.tasks import daily_habits
 
 
 class HabitsVewSet(viewsets.ModelViewSet):
@@ -38,5 +39,6 @@ class HabitListApiVew(generics.ListAPIView):
     pagination_class = HabitPaginator
 
     def get_queryset(self):
+        daily_habits()
         queryset = super().get_queryset().filter(is_public=True).exclude(owner=self.request.user)
         return queryset

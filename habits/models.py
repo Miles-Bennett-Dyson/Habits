@@ -21,7 +21,7 @@ class Habits(models.Model):
         help_text="Введите время, когда необходимо выполнять привычку"
     )
 
-    next_due_date = models.DateTimeField(
+    next_due_date = models.DateField(
         verbose_name="Следующая дата выполнения",
         **NULLABLE,
     )
