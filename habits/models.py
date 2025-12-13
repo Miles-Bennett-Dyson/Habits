@@ -9,17 +9,21 @@ class Habits(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор записи",
         related_name="owner",
-        **NULLABLE,
     )
     place = models.CharField(
         max_length=255,
         verbose_name="Место",
         help_text="Введите место, в котором необходимо выполнять привычку"
     )
-    time = models.DateTimeField(
+    time = models.TimeField(
         verbose_name="Время",
         help_text="Введите время, когда необходимо выполнять привычку"
     )
+
+    next_due_date = models.DateTimeField(
+        verbose_name="Следующая дата выполнения",
+    )
+
     action = models.CharField(
         max_length=255,
         verbose_name="Действие",
@@ -60,6 +64,26 @@ class Habits(models.Model):
 
     def __str__(self):
         return self.action
+
+    class Meta:
+        verbose_name = 'Привычка'
+        verbose_name_plural = 'Привычки'
+        ordering = ('pk',)
+
+class HourlyTasks(models.Model):
+
+    habit = models.ForeignKey(
+        Habits,
+        on_delete=models.CASCADE,
+        verbose_name="Привычка",
+        related_name="habit",
+    )
+    time = models.TimeField(
+        verbose_name="Назначенное время выполнения привычки",
+    )
+
+    def __str__(self):
+        return self.time
 
     class Meta:
         verbose_name = 'Привычка'
