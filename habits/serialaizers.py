@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from habits.models import Habits
+from habits.services import setting_next_date
 from habits.validators import DurationValidator, HabitFieldsValidator
 
 
@@ -10,6 +11,10 @@ class HabitSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         related_habit = validated_data.get('related_habit')
         reward = validated_data.get('reward')
+        user_time = validated_data.get('time')
+        periodicity = validated_data.get('periodicity')
+        validated_data['next_due_date'] = setting_next_date(user_time, periodicity)
+
         if not related_habit and not reward:
             raise ValidationError('Необходимо указать вознаграждение ИЛИ связанную привычку')
         if related_habit and reward:

@@ -9,6 +9,7 @@ class Habits(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор записи",
         related_name="owner",
+        **NULLABLE,
     )
     place = models.CharField(
         max_length=255,
@@ -22,6 +23,7 @@ class Habits(models.Model):
 
     next_due_date = models.DateTimeField(
         verbose_name="Следующая дата выполнения",
+        **NULLABLE,
     )
 
     action = models.CharField(
