@@ -39,9 +39,5 @@ class HabitListApiVew(generics.ListAPIView):
     pagination_class = HabitPaginator
 
     def get_queryset(self):
-        # get_habits_for_today()
-        # get_tasks_in_the_next_hour()
-        get_tasks_from_cache()
-
         queryset = super().get_queryset().filter(is_public=True).exclude(owner=self.request.user)
         return queryset

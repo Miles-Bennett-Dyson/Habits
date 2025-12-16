@@ -1,5 +1,6 @@
 import pickle
 
+from celery import shared_task
 from django.core.cache import cache
 from django.utils import timezone
 
@@ -9,7 +10,7 @@ from habits.services import send_telegram_message
 CACHE_KEY = "hourly_tasks"
 
 
-# @shared_task
+@shared_task
 def get_habits_for_today():
     """ Функция для формирования списка привычек на сегодняшний день. """
 
@@ -23,7 +24,7 @@ def get_habits_for_today():
         HabitsForToday.objects.create(habit=habit, time=habit.time)
 
 
-# @shared_task
+@shared_task
 def get_tasks_in_the_next_hour():
     """ Функция для получения задач в ближайший час и добавления их в кэш. """
 
@@ -48,7 +49,7 @@ def get_tasks_in_the_next_hour():
     cache.set(CACHE_KEY, pickle.dumps(habits_dict), 60 * 60)
 
 
-# @shared_task
+@shared_task
 def get_tasks_from_cache():
     """ Функция ежеминутно проверяет задачи и отправляет уведомления в тг """
     time_now = timezone.localtime().minute
