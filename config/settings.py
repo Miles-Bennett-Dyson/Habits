@@ -165,7 +165,20 @@ CELERY_TASK_TRACK_STARTED = True
 
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    'daily_habits': {
+        'task': 'habits.tasks.daily_habits',
+        'schedule': timedelta(minutes=1),
+    },
+    'tasks_in_the_next_hour': {
+        'task': 'habits.tasks.tasks_in_the_next_hour',
+        'schedule': timedelta(minutes=1),
+    },
+    'get_tasks_from_cache': {
+        'task': 'habits.tasks.get_tasks_from_cache',
+        'schedule': timedelta(minutes=1),
+    },
+}
 
 #          STATIC & MEDIA settings
 
@@ -177,3 +190,21 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "logs/debug.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
