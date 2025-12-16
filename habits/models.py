@@ -72,7 +72,7 @@ class Habits(models.Model):
         verbose_name_plural = 'Привычки'
         ordering = ('pk',)
 
-class HourlyTasks(models.Model):
+class HabitsForToday(models.Model):
 
     habit = models.ForeignKey(
         Habits,
