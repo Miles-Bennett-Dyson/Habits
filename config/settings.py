@@ -143,7 +143,7 @@ else:
 
 #          CACHE settings
 
-CACHE_ENABLED = False
+CACHE_ENABLED = True
 
 if CACHE_ENABLED:
     CACHES = {
