@@ -5,7 +5,7 @@ from habits.models import Habits
 from habits.paginators import HabitPaginator
 from habits.permissions import IsOwner
 from habits.serialaizers import HabitSerializer
-from habits.tasks import daily_habits
+from habits.tasks import daily_habits, get_tasks_in_the_next_hour, get_tasks_from_cache
 
 
 class HabitsVewSet(viewsets.ModelViewSet):
@@ -40,5 +40,8 @@ class HabitListApiVew(generics.ListAPIView):
 
     def get_queryset(self):
         daily_habits()
+        get_tasks_in_the_next_hour()
+        get_tasks_from_cache()
+
         queryset = super().get_queryset().filter(is_public=True).exclude(owner=self.request.user)
         return queryset

@@ -85,7 +85,7 @@ class HourlyTasks(models.Model):
     )
 
     def __str__(self):
-        return self.time
+        return f'{self.habit}'
 
     class Meta:
         verbose_name = 'Привычка'
