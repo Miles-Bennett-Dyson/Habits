@@ -25,7 +25,8 @@ class HabitFieldsValidator:
         is_pleasure = value.get('is_pleasure') # приятная привычки
         reward = value.get('reward')
         periodicity = value.get('periodicity', 1)
-
+        reward = value.get('reward')
+        related_habit = value.get('related_habit')
 
         if related_habit and not related_habit.is_pleasure:
             raise ValidationError('В связанные привычки могут попадать только привычки с признаком приятной привычки!')
@@ -35,3 +36,9 @@ class HabitFieldsValidator:
 
         if not 8 > periodicity > 0:
             raise ValidationError('Нельзя выполнять привычку реже, чем 1 раз в 7 дней!')
+
+        if not related_habit and not reward:
+            raise ValidationError('Необходимо указать вознаграждение ИЛИ связанную привычку')
+
+        if related_habit and reward:
+            raise ValidationError('Можно указать только вознаграждение ИЛИ связанную привычку')

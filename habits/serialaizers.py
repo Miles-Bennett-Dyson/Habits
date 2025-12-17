@@ -9,17 +9,8 @@ from habits.validators import DurationValidator, HabitFieldsValidator
 class HabitSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        related_habit = validated_data.get('related_habit')
-        reward = validated_data.get('reward')
-        user_time = validated_data.get('time')
         periodicity = validated_data.get('periodicity')
         validated_data['next_due_date'] = setting_next_date(periodicity)
-
-        if not related_habit and not reward:
-            raise ValidationError('Необходимо указать вознаграждение ИЛИ связанную привычку')
-        if related_habit and reward:
-            raise ValidationError('Можно указать только вознаграждение ИЛИ связанную привычку')
-
         habit = Habits.objects.create(**validated_data)
         return habit
 
