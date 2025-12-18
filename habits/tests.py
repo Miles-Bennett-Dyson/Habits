@@ -141,3 +141,24 @@ class HabitCRUDTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(validation_error_text, expected_text)
+
+    def test_duration(self):
+        """ Тест указания времени выполнения привычки. """
+        url = reverse(viewname='habits:habit-list')
+        data = {
+            'place': 'Парк',
+            'time': datetime.time(20, 30),
+            'action': 'Гулять',
+            'periodicity': 1,
+            'reward': 'Печенье',
+            'related_habit': self.habit.pk,
+            'duration': '320',
+            'is_public': True,
+            "owner": self.user.pk
+        }
+        response = self.client.post(url, data, format='json')
+        validation_error_text = response.json().get('non_field_errors')[0]
+        expected_text = 'Время на выполнение не должны быть более 120 секунд!'
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(validation_error_text, expected_text)
