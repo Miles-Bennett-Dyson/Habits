@@ -61,6 +61,27 @@ class HabitCRUDTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(validation_error_text, expected_text)
 
+    def test_is_pleasure_and_related_habit(self):
+        """ Тест одновременного указания приятной привычки и связанной привычки. """
+        url = reverse(viewname='habits:habit-list')
+        data = {
+            'place': 'Парк',
+            'time': datetime.time(20, 30),
+            'action': 'Гулять',
+            'periodicity': 1,
+            'related_habit': self.habit.pk,
+            'is_pleasure': True,
+            'duration': '120',
+            'is_public': True,
+            "owner": self.user.pk
+        }
+        response = self.client.post(url, data, format='json')
+        validation_error_text = response.json().get('non_field_errors')[0]
+        expected_text = 'У приятной привычки не может быть вознаграждения или связанной привычки!'
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(validation_error_text, expected_text)
+
     def test_periodicity(self):
         """ Тест создания привычки с периодом больше 7. """
         url = reverse(viewname='habits:habit-list')
