@@ -165,15 +165,15 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     "daily_habits": {
         "task": "habits.tasks.daily_habits",
-        "schedule": timedelta(seconds=60),
+        "schedule": timedelta(days=1),
     },
     "get_tasks_in_the_next_hour": {
         "task": "habits.tasks.get_tasks_in_the_next_hour",
-        "schedule": timedelta(seconds=30),
+        "schedule": timedelta(hours=1),
     },
     "get_tasks_from_cache": {
         "task": "habits.tasks.get_tasks_from_cache",
-        "schedule": timedelta(seconds=20),
+        "schedule": timedelta(minutes=1),
     },
 }
 
