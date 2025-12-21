@@ -3,6 +3,7 @@ import pickle
 from unittest.mock import patch
 
 import pytz
+from django.core.cache import cache
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -13,7 +14,6 @@ from habits.models import Habits, HabitsForToday
 from habits.tasks import get_habits_for_today, get_tasks_in_the_next_hour, get_tasks_from_cache_and_send_message, \
     CACHE_KEY
 from users.models import User
-from django.core.cache import cache
 
 
 class HabitCRUDTestCase(APITestCase):
