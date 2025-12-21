@@ -270,8 +270,8 @@ class TaskLogicTestCase(APITestCase):
 
     def test_get_habits_for_today(self):
         """ Тестирование формирования списка привычек на сегодняшний день. """
-        date1 = datetime.date(2025, 7, 5)
-        with freeze_time(date1):
-            a = get_habits_for_today()
-            result = HabitsForToday.objects.all().count()
+        date = datetime.date(2025, 7, 5)
+        with freeze_time(date):
+            get_habits_for_today()
+        result = HabitsForToday.objects.all().count()
         self.assertEqual(result, 2)
