@@ -5,7 +5,6 @@ from habits.models import Habits
 from habits.paginators import HabitPaginator
 from habits.permissions import IsOwner
 from habits.serialaizers import HabitSerializer
-from habits.tasks import get_habits_for_today, get_tasks_in_the_next_hour, get_tasks_from_cache
 
 
 class HabitsVewSet(viewsets.ModelViewSet):

@@ -15,18 +15,18 @@ class DurationValidator:
     def __call__(self, value):
         duration:timedelta = value.get(self.field)
         td = timedelta(seconds=120)
+        if duration is None:
+            return
         if duration > td:
-            raise ValidationError('Время на выполнение не должны быть более 120 секунд!')
+            raise ValidationError('Время на выполнение не должно быть более 120 секунд!')
 
 class HabitFieldsValidator:
 
     def __call__(self, value):
         related_habit = value.get('related_habit') # связанная привычка
         is_pleasure = value.get('is_pleasure') # приятная привычки
-        reward = value.get('reward')
+        reward = value.get('reward')  # вознаграждение
         periodicity = value.get('periodicity', 1)
-        reward = value.get('reward')
-        related_habit = value.get('related_habit')
 
         if related_habit and not related_habit.is_pleasure:
             raise ValidationError('В связанные привычки могут попадать только привычки с признаком приятной привычки!')
@@ -37,7 +37,7 @@ class HabitFieldsValidator:
         if not 8 > periodicity > 0:
             raise ValidationError('Нельзя выполнять привычку реже, чем 1 раз в 7 дней!')
 
-        if not related_habit and not reward:
+        if not is_pleasure and not related_habit and not reward:
             raise ValidationError('Необходимо указать вознаграждение ИЛИ связанную привычку')
 
         if related_habit and reward:
