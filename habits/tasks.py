@@ -50,9 +50,9 @@ def get_tasks_in_the_next_hour():
 
 
 @shared_task
-def get_tasks_from_cache():
+def get_tasks_from_cache_and_send_message():
     """ Функция ежеминутно проверяет задачи и отправляет уведомления в тг """
-    time_now = timezone.localtime().minute
+    minute_now = timezone.localtime().minute
     hourly_tasks = cache.get(CACHE_KEY)
     if hourly_tasks is None:
         return
@@ -66,7 +66,7 @@ def get_tasks_from_cache():
         if not tg_chat_id:
             continue
 
-        if not hourly_task.get('is_sent') and habit_time.minute <= time_now:
+        if not hourly_task.get('is_sent') and habit_time.minute <= minute_now:
             habit_action = hourly_task.get('action')
             habit_place = hourly_task.get('place')
             message = f'В {habit_time}, я буду {habit_action} в {habit_place}'

@@ -1,5 +1,6 @@
 import datetime
 import pickle
+from unittest.mock import patch
 
 import pytz
 from django.urls import reverse
@@ -9,7 +10,8 @@ from rest_framework.test import APITestCase
 
 from config.settings import TIME_ZONE
 from habits.models import Habits, HabitsForToday
-from habits.tasks import get_habits_for_today, get_tasks_in_the_next_hour
+from habits.tasks import get_habits_for_today, get_tasks_in_the_next_hour, get_tasks_from_cache_and_send_message, \
+    CACHE_KEY
 from users.models import User
 from django.core.cache import cache
 
@@ -294,12 +296,43 @@ class TaskLogicTestCase(APITestCase):
             )
             self.habit_td_2 = HabitsForToday.objects.create(
                 habit=self.habit2,
-                time=datetime.time(20, 30),
+                time=datetime.time(20, 00),
             )
             self.habit_td_3 = HabitsForToday.objects.create(
                 habit=self.habit3,
-                time=datetime.time(20, 30),
+                time=datetime.time(20, 59),
             )
             get_tasks_in_the_next_hour()
-        result = pickle.loads(cache.get("hourly_tasks"))
+        result = pickle.loads(cache.get(CACHE_KEY))
         self.assertEqual(len(result), 2)
+
+    def test_get_tasks_from_cache_and_send_message(self):
+        """ Тестирование проверки задачи в кэше и отправления уведомления в тг. """
+        cache.clear()
+        tz = pytz.timezone(TIME_ZONE)
+        date = datetime.datetime(year=2025, month=7, day=5, hour=20, minute=15)
+        date_tz = tz.localize(date)
+
+        with freeze_time(time_to_freeze=date_tz):
+            fake_cache_data = {
+                1: {
+                    'time': datetime.time(20, 20),
+                    'action': self.habit.action,
+                    'place': self.habit.place,
+                    'chat_id': 12345678,
+                    'is_sent': False
+                },
+                2: {
+                    'time': datetime.time(20, 15),
+                    'action': self.habit2.action,
+                    'place': self.habit2.place,
+                    'chat_id': 12345678,
+                    'is_sent': False
+                }
+            }
+            cache.set(CACHE_KEY, pickle.dumps(fake_cache_data))
+            with (patch('habits.services.send_telegram_message')):
+                get_tasks_from_cache_and_send_message()
+        result = pickle.loads(cache.get(CACHE_KEY))
+        self.assertEqual(result[2]['is_sent'], True)
+        self.assertEqual(result[1]['is_sent'], False)
