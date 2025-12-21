@@ -1,5 +1,5 @@
 import datetime
-
+import os
 
 import requests
 
@@ -12,15 +12,12 @@ def setting_next_date(periodicity):
 
 def send_telegram_message(chat_id, message):
     """ Функция, для отправки уведомлений в чат telegram. """
+    url = os.getenv('TELEGRAM_URL')
+    tg_token = os.getenv('TELEGRAM_TOKEN')
+
     params = {
         'text': message,
         'chat_id': chat_id,
     }
-    url = 'https://api.telegram.org/bot'
-    token = '8057904554:AAGnsyt552hxhsN6tRdB0q2PPhmkrqruPrU'
 
-    response = requests.get(f'{url}{token}/sendMessage', params=params)
-
-
-if __name__ == '__main__':
-    send_telegram_message(1225099467, 'По лбу не дало?')
+    response = requests.get(f'{url}{tg_token}/sendMessage', params=params)
