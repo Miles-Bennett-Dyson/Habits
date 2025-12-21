@@ -51,6 +51,13 @@ class HabitCRUDTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Habits.objects.get(place='Бассейн').duration, datetime.timedelta(seconds=60))
 
+    def test_habit_delete(self):
+        """ Тест удаления привычки """
+        url = reverse(viewname='habits:habit-detail', args=(self.habit.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Habits.objects.all().count(), 0)
+
     def test_is_pleasure_and_reward(self):
         """ Тест одновременного указания вознаграждения и приятной привычки. """
         url = reverse(viewname='habits:habit-list')
