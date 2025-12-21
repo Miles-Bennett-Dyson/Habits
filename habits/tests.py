@@ -180,3 +180,36 @@ class HabitCRUDTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(validation_error_text, expected_text)
+
+class HabitPublicTestCase(APITestCase):
+    def setUp(self):
+        self.user_1 = User.objects.create(email="test@test.com")
+        self.user_2 = User.objects.create(email="test2@test.com")
+        self.habit_1 = Habits.objects.create(
+            place='Бассейн',
+            time=datetime.time(20, 30),
+            action='Плавать',
+            periodicity=1,
+            duration='120',
+            is_pleasure=True,
+            is_public=True,
+            owner=self.user_1
+        )
+        self.habit_2 = Habits.objects.create(
+            place='Бассейн',
+            time=datetime.time(20, 30),
+            action='Плавать',
+            periodicity=1,
+            duration='120',
+            is_pleasure=True,
+            is_public=False,
+            owner=self.user_1
+        )
+
+    def test_get_list_public_habits(self):
+        self.client.force_authenticate(user=self.user_2)
+        url = reverse("habits:public_habits")
+        response = self.client.get(url)
+        count = response.json().get('count')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(count, 1)
