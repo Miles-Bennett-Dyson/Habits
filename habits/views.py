@@ -29,7 +29,9 @@ class HabitsVewSet(viewsets.ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(owner=self.request.user)
+        queryset = super().get_queryset()
+        if self.action == 'list':
+            return queryset.filter(owner=self.request.user)
         return queryset
 
 class HabitListApiVew(generics.ListAPIView):
@@ -38,5 +40,5 @@ class HabitListApiVew(generics.ListAPIView):
     pagination_class = HabitPaginator
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(is_public=True).exclude(owner=self.request.user)
-        return queryset
+        queryset = super().get_queryset()
+        return queryset.filter(is_public=True).exclude(owner=self.request.user)

@@ -51,6 +51,18 @@ class HabitCRUDTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Habits.objects.get(place='Бассейн').duration, datetime.timedelta(seconds=60))
 
+    def test_changes_another_user(self):
+        """ Тест изменения привычки другим пользователем."""
+        self.user_2 = User.objects.create(email="test2@test.com")
+        self.client.force_authenticate(user=self.user_2)
+        url = reverse(viewname='habits:habit-detail', kwargs={"pk": self.habit.pk})
+        data = {
+            'duration': '60',
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Habits.objects.get(place='Бассейн').duration, datetime.timedelta(seconds=120))
+
     def test_habit_delete(self):
         """ Тест удаления привычки """
         url = reverse(viewname='habits:habit-detail', args=(self.habit.pk,))
