@@ -1,13 +1,17 @@
 import datetime
+import pickle
 
+import pytz
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from config.settings import TIME_ZONE
 from habits.models import Habits, HabitsForToday
-from habits.tasks import get_habits_for_today
+from habits.tasks import get_habits_for_today, get_tasks_in_the_next_hour
 from users.models import User
+from django.core.cache import cache
 
 
 class HabitCRUDTestCase(APITestCase):
@@ -256,7 +260,7 @@ class TaskLogicTestCase(APITestCase):
             owner=self.user
         )
 
-        self.habit2 = Habits.objects.create(
+        self.habit3 = Habits.objects.create(
             place='Библиотека',
             time=datetime.time(20, 30),
             action='Читать',
@@ -275,3 +279,27 @@ class TaskLogicTestCase(APITestCase):
             get_habits_for_today()
         result = HabitsForToday.objects.all().count()
         self.assertEqual(result, 2)
+
+    def test_get_tasks_in_the_next_hour(self):
+        """ Тестирование получения задач в ближайший час и добавления их в кэш. """
+        cache.clear()
+        tz = pytz.timezone(TIME_ZONE)
+        date = datetime.datetime(year=2025, month=7, day=5, hour=20, minute=15)
+        date_tz = tz.localize(date)
+
+        with freeze_time(time_to_freeze=date_tz):
+            self.habit_td_1 = HabitsForToday.objects.create(
+                habit=self.habit,
+                time=datetime.time(18, 30),
+            )
+            self.habit_td_2 = HabitsForToday.objects.create(
+                habit=self.habit2,
+                time=datetime.time(20, 30),
+            )
+            self.habit_td_3 = HabitsForToday.objects.create(
+                habit=self.habit3,
+                time=datetime.time(20, 30),
+            )
+            get_tasks_in_the_next_hour()
+        result = pickle.loads(cache.get("hourly_tasks"))
+        self.assertEqual(len(result), 2)
