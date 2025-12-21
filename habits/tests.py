@@ -1,10 +1,12 @@
 import datetime
 
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from habits.models import Habits
+from habits.models import Habits, HabitsForToday
+from habits.tasks import get_habits_for_today
 from users.models import User
 
 
@@ -193,6 +195,7 @@ class HabitCRUDTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(validation_error_text, expected_text)
 
+
 class HabitPublicTestCase(APITestCase):
     def setUp(self):
         self.user_1 = User.objects.create(email="test@test.com")
@@ -225,3 +228,50 @@ class HabitPublicTestCase(APITestCase):
         count = response.json().get('count')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(count, 1)
+
+
+class TaskLogicTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(email="test@test.com")
+        self.habit = Habits.objects.create(
+            place='Бассейн',
+            time=datetime.time(20, 30),
+            action='Плавать',
+            periodicity=1,
+            duration='120',
+            next_due_date=datetime.date(2025, 7, 5),
+            is_pleasure=True,
+            is_public=True,
+            owner=self.user
+        )
+        self.habit2 = Habits.objects.create(
+            place='Парк',
+            time=datetime.time(20, 30),
+            action='Гулять',
+            periodicity=1,
+            duration='120',
+            next_due_date=datetime.date(2025, 7, 5),
+            is_pleasure=True,
+            is_public=True,
+            owner=self.user
+        )
+
+        self.habit2 = Habits.objects.create(
+            place='Библиотека',
+            time=datetime.time(20, 30),
+            action='Читать',
+            periodicity=1,
+            duration='120',
+            next_due_date=datetime.date(2025, 7, 8),
+            is_pleasure=True,
+            is_public=True,
+            owner=self.user
+        )
+
+    def test_get_habits_for_today(self):
+        """ Тестирование формирования списка привычек на сегодняшний день. """
+        date1 = datetime.date(2025, 7, 5)
+        with freeze_time(date1):
+            a = get_habits_for_today()
+            result = HabitsForToday.objects.all().count()
+        self.assertEqual(result, 2)
