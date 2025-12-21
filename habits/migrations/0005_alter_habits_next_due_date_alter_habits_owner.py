@@ -8,19 +8,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('habits', '0004_habits_next_due_date_alter_habits_owner_and_more'),
+        ("habits", "0004_habits_next_due_date_alter_habits_owner_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='habits',
-            name='next_due_date',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Следующая дата выполнения'),
+            model_name="habits",
+            name="next_due_date",
+            field=models.DateTimeField(blank=True, null=True, verbose_name="Следующая дата выполнения"),
         ),
         migrations.AlterField(
-            model_name='habits',
-            name='owner',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='owner', to=settings.AUTH_USER_MODEL, verbose_name='Автор записи'),
+            model_name="habits",
+            name="owner",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="owner",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Автор записи",
+            ),
         ),
     ]

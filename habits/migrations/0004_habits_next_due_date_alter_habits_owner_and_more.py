@@ -8,38 +8,53 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('habits', '0003_alter_habits_owner'),
+        ("habits", "0003_alter_habits_owner"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='habits',
-            name='next_due_date',
-            field=models.DateTimeField(default='2025-12-13 13:36:00.733176', verbose_name='Следующая дата выполнения'),
+            model_name="habits",
+            name="next_due_date",
+            field=models.DateTimeField(default="2025-12-13 13:36:00.733176", verbose_name="Следующая дата выполнения"),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='habits',
-            name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='owner', to=settings.AUTH_USER_MODEL, verbose_name='Автор записи'),
+            model_name="habits",
+            name="owner",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="owner",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Автор записи",
+            ),
         ),
         migrations.AlterField(
-            model_name='habits',
-            name='time',
-            field=models.TimeField(help_text='Введите время, когда необходимо выполнять привычку', verbose_name='Время'),
+            model_name="habits",
+            name="time",
+            field=models.TimeField(
+                help_text="Введите время, когда необходимо выполнять привычку", verbose_name="Время"
+            ),
         ),
         migrations.CreateModel(
-            name='HourlyTasks',
+            name="HourlyTasks",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time', models.TimeField(verbose_name='Назначенное время выполнения привычки')),
-                ('habit', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='habit', to='habits.habits', verbose_name='Привычка')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("time", models.TimeField(verbose_name="Назначенное время выполнения привычки")),
+                (
+                    "habit",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="habit",
+                        to="habits.habits",
+                        verbose_name="Привычка",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Привычка',
-                'verbose_name_plural': 'Привычки',
-                'ordering': ('pk',),
+                "verbose_name": "Привычка",
+                "verbose_name_plural": "Привычки",
+                "ordering": ("pk",),
             },
         ),
     ]

@@ -12,7 +12,7 @@ CACHE_KEY = "hourly_tasks"
 
 @shared_task
 def get_habits_for_today():
-    """ Функция для формирования списка привычек на сегодняшний день. """
+    """Функция для формирования списка привычек на сегодняшний день."""
 
     HabitsForToday.objects.all().delete()
     today = timezone.localdate()
@@ -26,7 +26,7 @@ def get_habits_for_today():
 
 @shared_task
 def get_tasks_in_the_next_hour():
-    """ Функция для получения задач в ближайший час и добавления их в кэш. """
+    """Функция для получения задач в ближайший час и добавления их в кэш."""
 
     if cache.get(CACHE_KEY) is not None:
         cache.delete(CACHE_KEY)
@@ -40,18 +40,18 @@ def get_tasks_in_the_next_hour():
     habits_dict = {}
     for habit in habits:
         habits_dict[habit.pk] = {
-            'time': habit.habit.time,
-            'action': habit.habit.action,
-            'place': habit.habit.place,
-            'chat_id': habit.habit.owner.tg_chat_id,
-            'is_sent': False
+            "time": habit.habit.time,
+            "action": habit.habit.action,
+            "place": habit.habit.place,
+            "chat_id": habit.habit.owner.tg_chat_id,
+            "is_sent": False,
         }
     cache.set(CACHE_KEY, pickle.dumps(habits_dict), 60 * 60)
 
 
 @shared_task
 def get_tasks_from_cache_and_send_message():
-    """ Функция ежеминутно проверяет задачи и отправляет уведомления в тг """
+    """Функция ежеминутно проверяет задачи и отправляет уведомления в тг"""
     minute_now = timezone.localtime().minute
     hourly_tasks = cache.get(CACHE_KEY)
     if hourly_tasks is None:
@@ -60,16 +60,16 @@ def get_tasks_from_cache_and_send_message():
     loaded = pickle.loads(hourly_tasks)
 
     for hourly_task in loaded.values():
-        habit_time = hourly_task.get('time')
-        tg_chat_id = hourly_task.get('chat_id')
+        habit_time = hourly_task.get("time")
+        tg_chat_id = hourly_task.get("chat_id")
 
         if not tg_chat_id:
             continue
 
-        if not hourly_task.get('is_sent') and habit_time.minute <= minute_now:
-            habit_action = hourly_task.get('action')
-            habit_place = hourly_task.get('place')
-            message = f'В {habit_time}, я буду {habit_action} в {habit_place}'
+        if not hourly_task.get("is_sent") and habit_time.minute <= minute_now:
+            habit_action = hourly_task.get("action")
+            habit_place = hourly_task.get("place")
+            message = f"В {habit_time}, я буду {habit_action} в {habit_place}"
             send_telegram_message(tg_chat_id, message)
-            hourly_task['is_sent'] = True
+            hourly_task["is_sent"] = True
     cache.set(CACHE_KEY, pickle.dumps(loaded), 60 * 60)

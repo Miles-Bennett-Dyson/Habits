@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-NULLABLE = {'null': True, 'blank': True}
+NULLABLE = {"null": True, "blank": True}
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="Электронная почта")
@@ -31,7 +32,7 @@ class User(AbstractUser):
         **NULLABLE,
     )
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     def __str__(self):
@@ -40,4 +41,4 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-        ordering = ['pk']
+        ordering = ["pk"]

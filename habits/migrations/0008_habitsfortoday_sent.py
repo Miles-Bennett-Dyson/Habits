@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('habits', '0007_rename_hourlytasks_habitsfortoday'),
+        ("habits", "0007_rename_hourlytasks_habitsfortoday"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='habitsfortoday',
-            name='sent',
-            field=models.BooleanField(default=False, verbose_name='Статус отправки'),
+            model_name="habitsfortoday",
+            name="sent",
+            field=models.BooleanField(default=False, verbose_name="Статус отправки"),
         ),
     ]

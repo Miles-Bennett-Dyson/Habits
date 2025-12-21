@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_alter_user_first_name_alter_user_last_name_and_more'),
+        ("users", "0002_alter_user_first_name_alter_user_last_name_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='tg_chat_id',
-            field=models.PositiveIntegerField(blank=True, help_text='Введите ID чата в телеграмм', null=True, verbose_name='ID чата в телеграмм'),
+            model_name="user",
+            name="tg_chat_id",
+            field=models.PositiveIntegerField(
+                blank=True, help_text="Введите ID чата в телеграмм", null=True, verbose_name="ID чата в телеграмм"
+            ),
         ),
     ]

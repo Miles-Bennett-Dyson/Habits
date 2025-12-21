@@ -6,18 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('habits', '0001_initial'),
+        ("habits", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='habits',
-            name='duration',
-            field=models.DurationField(help_text='Укажите время в секундах, которое предположительно потратите на выполнение привычки.', verbose_name='Длительность выполнения'),
+            model_name="habits",
+            name="duration",
+            field=models.DurationField(
+                help_text="Укажите время в секундах, которое предположительно потратите на выполнение привычки.",
+                verbose_name="Длительность выполнения",
+            ),
         ),
         migrations.AlterField(
-            model_name='habits',
-            name='periodicity',
-            field=models.PositiveIntegerField(default=1, help_text='Укажите периодичность выполнения привычки для напоминания в днях', verbose_name='Периодичность'),
+            model_name="habits",
+            name="periodicity",
+            field=models.PositiveIntegerField(
+                default=1,
+                help_text="Укажите периодичность выполнения привычки для напоминания в днях",
+                verbose_name="Периодичность",
+            ),
         ),
     ]

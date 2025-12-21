@@ -13,26 +13,27 @@ class HabitsVewSet(viewsets.ModelViewSet):
     pagination_class = HabitPaginator
 
     def perform_create(self, serializer):
-        habit = serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user)
 
     def get_permissions(self):
 
-        if self.action in ['update', 'partial_update']:
+        if self.action in ["update", "partial_update"]:
             self.permission_classes = [IsAuthenticated, IsOwner]
 
-        elif self.action == 'destroy':
+        elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
 
-        elif self.action == 'retrieve':
+        elif self.action == "retrieve":
             self.permission_classes = [IsAuthenticated, IsOwner]
 
         return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.action == 'list':
+        if self.action == "list":
             return queryset.filter(owner=self.request.user)
         return queryset
+
 
 class HabitListApiVew(generics.ListAPIView):
     serializer_class = HabitSerializer
