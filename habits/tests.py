@@ -28,7 +28,7 @@ class HabitCRUDTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Плавать",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             is_pleasure=True,
             is_public=True,
             owner=self.user,
@@ -45,7 +45,7 @@ class HabitCRUDTestCase(APITestCase):
             "action": "Гулять",
             "periodicity": 1,
             "reward": "Печенье",
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -57,7 +57,7 @@ class HabitCRUDTestCase(APITestCase):
         """Тест изменения привычки"""
         url = reverse(viewname="habits:habit-detail", args=(self.habit.pk,))
         data = {
-            "duration": "60",
+            "duration": datetime.timedelta(minutes=1),
         }
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -69,7 +69,7 @@ class HabitCRUDTestCase(APITestCase):
         self.client.force_authenticate(user=self.user_2)
         url = reverse(viewname="habits:habit-detail", kwargs={"pk": self.habit.pk})
         data = {
-            "duration": "60",
+            "duration": datetime.timedelta(minutes=1),
         }
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -92,7 +92,7 @@ class HabitCRUDTestCase(APITestCase):
             "periodicity": 1,
             "reward": "Печенье",
             "is_pleasure": True,
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -113,7 +113,7 @@ class HabitCRUDTestCase(APITestCase):
             "periodicity": 1,
             "related_habit": self.habit.pk,
             "is_pleasure": True,
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -133,7 +133,7 @@ class HabitCRUDTestCase(APITestCase):
             "action": "Гулять",
             "periodicity": 8,
             "reward": "Печенье",
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -152,7 +152,7 @@ class HabitCRUDTestCase(APITestCase):
             "time": datetime.time(20, 30),
             "action": "Гулять",
             "periodicity": 7,
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -173,7 +173,7 @@ class HabitCRUDTestCase(APITestCase):
             "periodicity": 1,
             "reward": "Печенье",
             "related_habit": self.habit.pk,
-            "duration": "120",
+            "duration": datetime.timedelta(minutes=2),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -194,7 +194,7 @@ class HabitCRUDTestCase(APITestCase):
             "periodicity": 1,
             "reward": "Печенье",
             "related_habit": self.habit.pk,
-            "duration": "320",
+            "duration": datetime.timedelta(minutes=6),
             "is_public": True,
             "owner": self.user.pk,
         }
@@ -215,7 +215,7 @@ class HabitPublicTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Плавать",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             is_pleasure=True,
             is_public=True,
             owner=self.user_1,
@@ -225,7 +225,7 @@ class HabitPublicTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Плавать",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             is_pleasure=True,
             is_public=False,
             owner=self.user_1,
@@ -248,7 +248,7 @@ class TaskLogicTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Плавать",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             next_due_date=datetime.date(2025, 7, 5),
             is_pleasure=True,
             is_public=True,
@@ -259,7 +259,7 @@ class TaskLogicTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Гулять",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             next_due_date=datetime.date(2025, 7, 5),
             is_pleasure=True,
             is_public=True,
@@ -271,7 +271,7 @@ class TaskLogicTestCase(APITestCase):
             time=datetime.time(20, 30),
             action="Читать",
             periodicity=1,
-            duration="120",
+            duration=datetime.timedelta(minutes=2),
             next_due_date=datetime.date(2025, 7, 8),
             is_pleasure=True,
             is_public=True,
