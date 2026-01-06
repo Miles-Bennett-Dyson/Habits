@@ -50,8 +50,8 @@ jobs:
       env:
         SECRET_KEY: 'django-insecure-test-key-replace-me-in-production'
         CSRF_TRUSTED_ORIGINS: 'http://localhost,http://127.0.0.1'
-        CACHE_LOCATION: 'redis://localhost:6379/1'
-        CELERY_BROKER_URL: 'redis://localhost:6379/0'
+        TELEGRAM_URL: 'api.telegram.org'
+        TELEGRAM_TOKEN: '123:abc'
       run: python manage.py test
 
   build:
