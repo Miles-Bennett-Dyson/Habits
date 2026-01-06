@@ -307,7 +307,12 @@ class TaskLogicTestCase(APITestCase):
                 time=datetime.time(20, 59),
             )
             get_tasks_in_the_next_hour()
-        result = pickle.loads(cache.get(CACHE_KEY))
+            raw_data = cache.get(CACHE_KEY)
+
+        if isinstance(raw_data, bytes):
+            result = pickle.loads(raw_data)
+        else:
+            result = raw_data
         self.assertEqual(len(result), 2)
 
     def test_get_tasks_from_cache_and_send_message(self):
@@ -335,8 +340,12 @@ class TaskLogicTestCase(APITestCase):
                 },
             }
             cache.set(CACHE_KEY, pickle.dumps(fake_cache_data))
-            with patch("habits.services.send_telegram_message"):
+            with patch("habits.tasks.send_telegram_message"):
                 get_tasks_from_cache_and_send_message()
-        result = pickle.loads(cache.get(CACHE_KEY))
+                raw_data = cache.get(CACHE_KEY)
+        if isinstance(raw_data, bytes):
+            result = pickle.loads(raw_data)
+        else:
+            result = raw_data
         self.assertEqual(result[2]["is_sent"], True)
         self.assertEqual(result[1]["is_sent"], False)
