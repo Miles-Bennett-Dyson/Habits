@@ -16,7 +16,13 @@ DEBUG = True if os.getenv("DEBUG") == "True" else False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://0.0.0.0",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
