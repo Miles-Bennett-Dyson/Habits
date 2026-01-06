@@ -108,11 +108,11 @@ INSTALLED_APPS = DEFAULT_APPS + ADDITIONAL_APPS + LOCAL_APPS
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("NAME"),
-        "USER": os.getenv("USER"),
-        "PASSWORD": os.getenv("PASSWORD"),
-        "HOST": os.getenv("HOST"),
-        "PORT": os.getenv("PORT"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
 
@@ -163,16 +163,16 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BEAT_SCHEDULE = {
-    "daily_habits": {
-        "task": "habits.tasks.daily_habits",
+    "get_habits_for_today": {
+        "task": "habits.tasks.get_habits_for_today",
         "schedule": timedelta(days=1),
     },
     "get_tasks_in_the_next_hour": {
         "task": "habits.tasks.get_tasks_in_the_next_hour",
         "schedule": timedelta(hours=1),
     },
-    "get_tasks_from_cache": {
-        "task": "habits.tasks.get_tasks_from_cache",
+    "get_tasks_from_cache_and_send_message": {
+        "task": "habits.tasks.get_tasks_from_cache_and_send_message",
         "schedule": timedelta(minutes=1),
     },
 }
@@ -183,8 +183,11 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
