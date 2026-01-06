@@ -91,10 +91,11 @@ jobs:
             --name myapp \
             -p 80:8000 \
             -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            -e DB_NAME="${{ secrets.DB_NAME }}" \
-            -e DB_USER="${{ secrets.DB_USER }}" \
-            -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            -e DB_HOST="${{ secrets.DB_HOST }}" \
+            -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
+            -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            -e POSTGRES_HOST="${{ secrets.POSTGRES_HOST }}" \
+            -e POSTGRES_PORT="${{ secrets.POSTGRES_PORT }}" \
             -e TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}" \
             -e TELEGRAM_URL="${{ secrets.TELEGRAM_URL }}" \
             ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
