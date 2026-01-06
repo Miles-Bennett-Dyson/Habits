@@ -229,4 +229,3 @@ if 'test' in sys.argv:
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         }
     }
-
