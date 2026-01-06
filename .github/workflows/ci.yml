@@ -43,6 +43,7 @@ jobs:
     - name: Run tests
       env:
         SECRET_KEY: 'django-insecure-test-key-replace-me-in-production'
+        CSRF_TRUSTED_ORIGINS: 'http://localhost,http://127.0.0.1'
       run: python manage.py test
 
   build:
