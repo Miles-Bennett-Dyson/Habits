@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    image: drf
+    image: ${IMAGE_NAME}
     container_name: drf_project
     command: bash -c "python manage.py migrate"
 
@@ -13,12 +13,13 @@ services:
       - /app/.venv
       - static_volume:/app/staticfiles
 
-    expose:
-      - "8000"
+    ports:
+      - "80:8000"
 
     depends_on:
       - redis
-      - db
+      - db:
+          condition: service_healthy
 
   celery_worker:
     build: .

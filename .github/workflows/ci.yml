@@ -76,27 +76,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
+      - name: Copy docker-compose.yml and .env to server
+        run: |
+            scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/docker-compose.yml
+
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-          docker stop myapp || true
-          docker rm myapp || true
-          docker run -d \
-            --name myapp \
-            -p 80:8000 \
-            -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
-            -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-            -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-            -e POSTGRES_HOST="${{ secrets.POSTGRES_HOST }}" \
-            -e POSTGRES_PORT="${{ secrets.POSTGRES_PORT }}" \
-            -e TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}" \
-            -e TELEGRAM_URL="${{ secrets.TELEGRAM_URL }}" \
-            ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          cat <<EOT > .env
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          EOT
+          docker compose pull
+          docker compose up -d
+          docker compose exec -T web python manage.py migrate
           EOF
