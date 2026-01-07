@@ -13,8 +13,9 @@ services:
       - /app/.venv
       - static_volume:/app/staticfiles
 
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
+
     depends_on:
       - redis
       - db
@@ -29,6 +30,9 @@ services:
     env_file:
       - ./.env
 
+    expose:
+      - "8000"
+
     depends_on:
       - redis
       - db
@@ -42,6 +46,9 @@ services:
       - .:/app/
     env_file:
       - ./.env
+
+    expose:
+      - "8000"
 
     depends_on:
       - redis

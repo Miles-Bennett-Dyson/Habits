@@ -213,7 +213,7 @@ CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ALLOWED_ORIGINS"),
 ]
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "127.0.0.1,localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1,http://localhost").split(",")
 
 CORS_ALLOW_ALL_ORIGINS = False
 
