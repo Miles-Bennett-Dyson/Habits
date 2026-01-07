@@ -24,8 +24,8 @@ services:
 
   celery_worker:
     build: .
+    image: ${IMAGE_NAME}
     command: celery -A config worker --loglevel=info
-    image: celery_worker
     container_name: celery_worker
     volumes:
       - .:/app/
@@ -38,8 +38,8 @@ services:
 
   celery_beat:
     build: .
+    image: ${IMAGE_NAME}
     command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    image: celery_beat
     container_name: celery_beat
     volumes:
       - .:/app/

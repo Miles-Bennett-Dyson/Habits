@@ -90,8 +90,8 @@ jobs:
 
       - name: Deploy to server
         run: |
-          docker system prune -f
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker system prune -f
           cat <<EOT > .env
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
