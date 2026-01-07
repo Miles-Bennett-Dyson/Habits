@@ -52,8 +52,8 @@ services:
       - db
 
   nginx:
-    build:
-      context: ./nginx
+    image: ${NGINX_IMAGE_NAME}
+    container_name: nginx_prod
     ports:
       - "80:80"
     volumes:

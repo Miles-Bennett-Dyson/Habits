@@ -65,6 +65,12 @@ jobs:
       - name: Log in Docker hub
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
+      - name: Build Nginx image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/my_nginx:${{ github.sha }} ./nginx
+
+      - name: Push Nginx image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my_nginx:${{ github.sha }}
+
       - name: Build Dicker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} .
 
@@ -101,6 +107,7 @@ jobs:
           POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
           CELERY_BROKER_URL=redis://redis:6379/1
           IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          NGINX_IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/my-nginx:${{ github.sha }}
           EOT
           docker compose pull
           docker compose up -d
