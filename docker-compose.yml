@@ -12,10 +12,8 @@ services:
       - .:/app
       - /app/.venv
       - static_volume:/app/staticfiles
-
-    ports:
-      - "80:8000"
-
+    expose:
+      - "8000"
     depends_on:
       db:
         condition: service_healthy
