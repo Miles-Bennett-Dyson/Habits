@@ -95,7 +95,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker system prune -f
+          docker image prune -f
           cat <<EOT > .env
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
@@ -109,5 +109,6 @@ jobs:
           EOT
           docker compose pull
           docker compose up -d
+          sleep 5
           docker compose exec -T web python manage.py migrate
           EOF
