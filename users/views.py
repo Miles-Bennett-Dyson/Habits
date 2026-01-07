@@ -5,7 +5,7 @@ from users.models import User
 from users.serializers import CreateUserSerializer, UserSerializer, SecureUserData
 
 
-class UserVewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
