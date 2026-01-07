@@ -31,21 +31,37 @@
    </tr>
   <tr>
     <th>Telegram Bot API</th>
-    <th>unittest</th>
+    <th>CI/CD</th>
     <th>Redis</th>
   </tr>
 </table>
   
 ---
-## <p align="center">Инициализация проекта</p>
-1. Клонируйте репозиторий (если необходимо).
-2. Установите зависимости через Poetry: `poetry install`
-3. Настройте переменные окружения. Замените на актуальные значения параметры в файле env.example.
-4. Настройте базу данных(PostgreSQL).
-5. Выполнените миграции.
-6. Запустите Django-сервер.
-7. Запустите Celery worker и beat.
+## <p align="center">CI/CD</p>
+В репозитории имеется ci.yml для GitHub Actions который запускет тесты проекта автоматически при каждом push в репозиторий. Так же автоматически деплоит проект на удаленный сервер после успешного прохождения тестов.
+Для успешного деплоя, вам нужно указать в Actions secrets значения для:
+- DEPLOY_DIR
+- DOCKER_HUB_ACCESS_TOKEN
+- DOCKER_HUB_USERNAME
+- POSTGRES_DB
+- POSTGRES_HOST
+- POSTGRES_PASSWORD
+- POSTGRES_PORT
+- POSTGRES_USER
+- SECRET_KEY
+- SERVER_IP
+- SSH_KEY
+- SSH_USER
+- TELEGRAM_TOKEN
+- TELEGRAM_URL
 
+Для деплоя вручную, используйте следующие шаги:
+1. Зайдите на ваш сервер через SSH: ssh root@ip-вашего-сервера
+2. Установите Docker: curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+3. Сгенерируйте SSH-ключ на сервере и добавьте его в GitHub, либо используйте токен (PAT). Склонируйте репозиторий: git clone -b develop git@github.com:ваш-логин/имя-репозитория.git
+4. Файлы .env не передаются через Git. Вам нужно создать его на сервере вручную: nano .env
+5. Соберите и запустите образ командой: docker compose up -d --build
+6. Проверить запущенные контейнеры можно командой docker ps. Посмотреть все контейнеры командой: docker ps -a. Либо перейдите на ваш сервер в браузере по ip адресу.
 
 ## <p align="center">Модели данных </p> 
 ### <p align="center">Модель «Привычка» (Habit)</p> 
