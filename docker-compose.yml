@@ -17,9 +17,10 @@ services:
       - "80:8000"
 
     depends_on:
-      - redis
-      - db:
-          condition: service_healthy
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   celery_worker:
     build: .
@@ -30,9 +31,6 @@ services:
       - .:/app/
     env_file:
       - ./.env
-
-    expose:
-      - "8000"
 
     depends_on:
       - redis
@@ -48,8 +46,6 @@ services:
     env_file:
       - ./.env
 
-    expose:
-      - "8000"
 
     depends_on:
       - redis
