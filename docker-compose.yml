@@ -1,0 +1,72 @@
+services:
+  web:
+    image: ${IMAGE_NAME}
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+
+    env_file: .env
+
+    volumes:
+      - static_volume:/app/staticfiles
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  celery_worker:
+    image: ${IMAGE_NAME}
+    command: celery -A config worker --loglevel=info
+    env_file: .env
+
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    image: ${IMAGE_NAME}
+    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file: .env
+
+    depends_on:
+      - redis
+      - db
+
+  nginx:
+    image: ${NGINX_IMAGE_NAME}
+    container_name: nginx_prod
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles:ro
+    depends_on:
+      - web
+
+
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+    env_file:
+      - ./.env
+
+  db:
+    image: postgres:16.0
+    container_name: postgres
+
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  static_volume:
+  redis_data:

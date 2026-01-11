@@ -1,0 +1,114 @@
+name: Django CI
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install flake8
+        run: |
+           python -m pip install --upgrade pip
+           pip install flake8
+
+      - name: Run flake8
+        run: flake8 .
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      env:
+        SECRET_KEY: 'django-insecure-test-key-replace-me-in-production'
+        CSRF_TRUSTED_ORIGINS: 'http://localhost,http://127.0.0.1'
+        TELEGRAM_URL: 'api.telegram.org'
+        TELEGRAM_TOKEN: '123:abc'
+      run: python manage.py test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Log in Docker hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Build and Push Nginx
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/my-nginx:${{ github.sha }} ./nginx
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-nginx:${{ github.sha }}
+      - name: Build Dicker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} .
+
+      - name: Push Docker image in Docker hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Copy docker-compose.yml and .env to server
+        run: |
+            scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/docker-compose.yml
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker image prune -f
+          cat <<EOT > .env
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          CELERY_BROKER_URL=redis://redis:6379/1
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          NGINX_IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/my-nginx:${{ github.sha }}
+          EOT
+          docker compose pull
+          docker compose up -d --wait
+          sleep 5
+          EOF
